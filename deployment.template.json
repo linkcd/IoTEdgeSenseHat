@@ -12,7 +12,7 @@
               "veracitylab": {
                 "username": "$CONTAINER_REGISTRY_USERNAME_veracitylab",
                 "password": "$CONTAINER_REGISTRY_PASSWORD_veracitylab",
-                "address": "veracitylab.azurecr.io"
+                "address": "$CONTAINER_REGISTRY_ADDRES"
               }
             }
           }
@@ -36,24 +36,14 @@
           }
         },
         "modules": {
-          "tempSensor": {
-            "version": "1.0",
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0",
-              "createOptions": "{}"
-            }
-          },
           "sensorsinhatmodule": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.sensorsinhatmodule.amd64}",
-              "createOptions": "{}"
+              "image": "${MODULES.sensorsinhatmodule.arm32v7}",
+              "createOptions": "{\"ExposedPorts\":{\"5678/tcp\":{}},\"HostConfig\":{\"Privileged\":true,\"PortBindings\":{\"5678/tcp\":[{\"HostPort\":\"5678\"}]},}}"
             }
           }
         }
@@ -63,8 +53,8 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "sensorsinhatmoduleToIoTHub": "FROM /messages/modules/sensorsinhatmodule/outputs/* INTO $upstream",
-          "sensorTosensorsinhatmodule": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/sensorsinhatmodule/inputs/input1\")"
+          "sensorsinhatmoduleToIoTHub": "FROM /messages/modules/sensorsinhatmodule/outputs/* INTO $upstream"
+          
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
