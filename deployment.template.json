@@ -43,7 +43,17 @@
             "restartPolicy": "always",
             "settings": {
               "image": "${MODULES.sensorsonhat.arm32v7}",
-              "createOptions": "{\"ExposedPorts\":{\"5678/tcp\":{}},\"HostConfig\":{\"Privileged\":true,\"PortBindings\":{\"5678/tcp\":[{\"HostPort\":\"5678\"}]},}}"
+              "createOptions": "{\"HostConfig\":{\"Privileged\":true}}"
+            }
+          },
+          "displayonhat": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.displayonhat.arm32v7}",
+              "createOptions": "{\"HostConfig\":{\"Privileged\":true}}"
             }
           }
         }
@@ -53,8 +63,8 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "sensorsonhatToIoTHub": "FROM /messages/modules/sensorsonhat/outputs/* INTO $upstream"
-          
+          "sensorsOnHatToDisplay": "FROM /messages/modules/sensorsonhat/outputs/* INTO BrokeredEndpoint(\"/modules/displayonhat/inputs/input1\")",
+          "sensorOnHatToIoTHub": "FROM /messages/modules/sensorsonhat/outputs/telementry INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
