@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "sensorsinhatmodule Remote Debug (Python)",
+      "name": "sensorsonhat Remote Debug (Python)",
       "type": "python",
       "request": "attach",
       "port": 5678,
@@ -11,14 +11,14 @@
       "redirectOutput": true,
       "pathMappings": [
         {
-          "localRoot": "${workspaceFolder}/modules/sensorsinhatmodule",
+          "localRoot": "${workspaceFolder}/modules/sensorsonhat",
           "remoteRoot": "/app"
         }
       ],
       "windows": {
         "pathMappings": [
           {
-            "localRoot": "${workspaceFolder}\\modules\\sensorsinhatmodule",
+            "localRoot": "${workspaceFolder}\\modules\\sensorsonhat",
             "remoteRoot": "/app"
           }
         ]
