@@ -21,6 +21,7 @@ MESSAGE_TIMEOUT = 10000
 
 # global counters
 SEND_CALLBACKS = 0
+SEND_SENSOR_COUNT = 0
 
 # Choose HTTP, AMQP or MQTT as transport protocol.  Currently only MQTT is supported.
 PROTOCOL = IoTHubTransportProvider.MQTT
@@ -54,6 +55,10 @@ class HubManager(object):
 
     # Forwards the message received onto the next stage in the process.
     def send_event_to_output(self, outputQueueName, event, send_context):
+        global SEND_SENSOR_COUNT
+        SEND_SENSOR_COUNT += 1
+        print("Sent #%d to output queue..." % SEND_SENSOR_COUNT)
+
         self.client.send_event_async(
             outputQueueName, event, send_confirmation_callback, send_context)
 
@@ -72,12 +77,10 @@ def main(protocol):
             temp = str(round(sense.get_temperature(), 2))
             print("Temperature: %s C" % temp)
 
-
-            
             message = IoTHubMessage(bytearray(temp, 'utf8'))
             hub_manager.send_event_to_output("telementry", message, 0)
 
-            time.sleep(1)
+            time.sleep(5)
 
     except IoTHubError as iothub_error:
         print ( "Unexpected error %s from IoTHub" % iothub_error )

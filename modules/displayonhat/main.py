@@ -45,16 +45,19 @@ def receive_message_callback(message, hubManager):
     global RECEIVE_CALLBACKS
     message_buffer = message.get_bytearray()
     size = len(message_buffer)
-    print ( "    Data: <<<%s>>> & Size=%d" % (message_buffer[:size].decode('utf-8'), size) )
+
+    data = message_buffer[:size].decode('utf-8')
+
+    print ( "    Data: <<<%s>>> & Size=%d" % (data, size) )
     map_properties = message.properties()
     key_value_pair = map_properties.get_internals()
     print ( "    Properties: %s" % key_value_pair )
     RECEIVE_CALLBACKS += 1
 
-    sense.show_message(str(RECEIVE_CALLBACKS))
+    sense.show_message(str(data))
 
     print ( "    Total calls received: %d" % RECEIVE_CALLBACKS )
-    hubManager.forward_event_to_output("output1", message, 0)
+    #hubManager.forward_event_to_output("output1", message, 0)
     return IoTHubMessageDispositionResult.ACCEPTED
 
 
