@@ -6,6 +6,7 @@ import random
 import time
 import sys
 import iothub_client
+    import json
 
 from sense_hat import SenseHat
 sense = SenseHat()
@@ -23,6 +24,8 @@ MESSAGE_TIMEOUT = 10000
 # global counters
 RECEIVE_CALLBACKS = 0
 SEND_CALLBACKS = 0
+TWIN_CALLBACKS = 0
+TEXT_COLOR = (255, 255, 255)
 
 # Choose HTTP, AMQP or MQTT as transport protocol.  Currently only MQTT is supported.
 PROTOCOL = IoTHubTransportProvider.MQTT
@@ -43,6 +46,8 @@ def send_confirmation_callback(message, result, user_context):
 # we will forward this message onto the "output1" queue.
 def receive_message_callback(message, hubManager):
     global RECEIVE_CALLBACKS
+    global TEXT_COLOR
+
     message_buffer = message.get_bytearray()
     size = len(message_buffer)
 
@@ -54,12 +59,29 @@ def receive_message_callback(message, hubManager):
     print ( "    Properties: %s" % key_value_pair )
     RECEIVE_CALLBACKS += 1
 
-    sense.show_message(str(data))
+    sense.show_message(str(data), text_colour = TEXT_COLOR)
 
     print ( "    Total calls received: %d" % RECEIVE_CALLBACKS )
     #hubManager.forward_event_to_output("output1", message, 0)
     return IoTHubMessageDispositionResult.ACCEPTED
 
+def get_color_from_string(colorString):
+    tuple(list(map(int, colorString.split(","))))
+
+# module_twin_callback is invoked when the module twin's desired properties are updated.
+def module_twin_callback(update_state, payload, user_context):
+    global TWIN_CALLBACKS
+    global TEXT_COLOR
+
+    print ( "\nTwin callback called with:\nupdateStatus = %s\npayload = %s\ncontext = %s" % (update_state, payload, user_context) )
+    data = json.loads(payload)
+    if "desired" in data and "textColor" in data["desired"]:
+        TEXT_COLOR = get_color_from_string(["desired"]["textColor"])
+    if "textColor" in data:
+        TEXT_COLOR = get_color_from_string(data["textColor"])
+    TWIN_CALLBACKS += 1
+
+    print ( "Total calls confirmed: %d\n" % TWIN_CALLBACKS )
 
 class HubManager(object):
 
@@ -76,6 +98,9 @@ class HubManager(object):
         # sets the callback when a message arrives on "input1" queue.  Messages sent to 
         # other inputs or to the default will be silently discarded.
         self.client.set_message_callback("input1", receive_message_callback, self)
+
+        # Sets the callback when a module twin's desired properties are updated.
+        self.client.set_module_twin_callback(module_twin_callback, self)
 
     # Forwards the message received onto the next stage in the process.
     def forward_event_to_output(self, outputQueueName, event, send_context):
