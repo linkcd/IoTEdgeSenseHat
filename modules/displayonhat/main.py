@@ -6,7 +6,7 @@ import random
 import time
 import sys
 import iothub_client
-    import json
+import json
 
 from sense_hat import SenseHat
 sense = SenseHat()
@@ -66,7 +66,7 @@ def receive_message_callback(message, hubManager):
     return IoTHubMessageDispositionResult.ACCEPTED
 
 def get_color_from_string(colorString):
-    tuple(list(map(int, colorString.split(","))))
+    return tuple(list(map(int, colorString.split(","))))
 
 # module_twin_callback is invoked when the module twin's desired properties are updated.
 def module_twin_callback(update_state, payload, user_context):
@@ -76,11 +76,12 @@ def module_twin_callback(update_state, payload, user_context):
     print ( "\nTwin callback called with:\nupdateStatus = %s\npayload = %s\ncontext = %s" % (update_state, payload, user_context) )
     data = json.loads(payload)
     if "desired" in data and "textColor" in data["desired"]:
-        TEXT_COLOR = get_color_from_string(["desired"]["textColor"])
+        TEXT_COLOR = get_color_from_string(data["desired"]["textColor"])
     if "textColor" in data:
         TEXT_COLOR = get_color_from_string(data["textColor"])
     TWIN_CALLBACKS += 1
 
+    print ( "Now text color is %s" % str(TEXT_COLOR))
     print ( "Total calls confirmed: %d\n" % TWIN_CALLBACKS )
 
 class HubManager(object):
