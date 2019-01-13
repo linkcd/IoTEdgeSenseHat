@@ -17,7 +17,7 @@ This module also support IoT hub digital twin that one can change the LED displa
 ## Tips
 1. When using this repo, you need to create a .env file by using the format in sample.env
 
-2. Documentation for setup IoT Edge on Raspberry Pi: https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge-linux-arm
+2. Documentation for setup IoT Edge on Raspberry Pi: https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge-linux-arm  and development environment: https://docs.microsoft.com/en-us/azure/iot-edge/how-to-vs-code-develop-module
 
 3. Development and deployment on different platform (PC vs Raspberry Pi)
 If you are building a RaspberryPi-based application on laptop (PC), use cross platform build. See http://kmdouglass.github.io/posts/how-i-built-a-cross-compilation-workflow-for-the-raspberry-pi.html
